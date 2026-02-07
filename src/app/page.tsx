@@ -1,65 +1,80 @@
-import Image from "next/image";
+"use client";
+import { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Screen1RealityCheck from "@/components/screens/Screen1RealityCheck";
+import Screen2Handover from "@/components/screens/Screen2Handover";
+import Screen3Synthesis from "@/components/screens/Screen3Synthesis";
+import Screen4DeepDive from "@/components/screens/Screen4DeepDive";
+import Screen5SearchMode from "@/components/screens/Screen5SearchMode";
+import Screen6MatchDashboard from "@/components/screens/Screen6MatchDashboard";
+import Screen7WarmIntro from "@/components/screens/Screen7WarmIntro";
+import Screen8Dossier from "@/components/screens/Screen8Dossier";
+import Screen9Debrief from "@/components/screens/Screen9Debrief";
+
+const screenVariants = {
+  enter: { opacity: 0, x: 60, filter: "blur(4px)" },
+  center: { opacity: 1, x: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, x: -60, filter: "blur(4px)" },
+};
 
 export default function Home() {
+  const [currentScreen, setCurrentScreen] = useState(0);
+
+  const goToScreen = useCallback((screen: number) => {
+    setCurrentScreen(screen);
+  }, []);
+
+  const next = useCallback(() => {
+    setCurrentScreen((s) => Math.min(s + 1, 8));
+  }, []);
+
+  const screens = [
+    <Screen1RealityCheck key="s1" onNext={next} />,
+    <Screen2Handover key="s2" onNext={next} />,
+    <Screen3Synthesis key="s3" onNext={next} />,
+    <Screen4DeepDive key="s4" onNext={next} />,
+    <Screen5SearchMode key="s5" onNext={next} />,
+    <Screen6MatchDashboard key="s6" onNext={next} />,
+    <Screen7WarmIntro key="s7" onNext={next} />,
+    <Screen8Dossier key="s8" onNext={next} />,
+    <Screen9Debrief key="s9" onNext={() => goToScreen(0)} />,
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="phone-frame">
+      {/* Screen navigation dots (desktop) */}
+      <div className="hidden md:flex fixed right-8 top-1/2 -translate-y-1/2 flex-col gap-2 z-50">
+        {Array.from({ length: 9 }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => goToScreen(i)}
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+              i === currentScreen
+                ? "bg-neon-purple scale-125 shadow-[0_0_8px_rgba(168,85,247,0.6)]"
+                : "bg-white/15 hover:bg-white/30"
+            }`}
+            title={`Screen ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={currentScreen}
+          variants={screenVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{
+            duration: 0.4,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
+          className="min-h-full"
+          style={{ minHeight: "inherit", maxHeight: "inherit", overflow: "auto" }}
+        >
+          {screens[currentScreen]}
+        </motion.div>
+      </AnimatePresence>
+    </main>
   );
 }
