@@ -161,6 +161,7 @@ body {
   position: relative;
   overflow: hidden;
   background: var(--color-obsidian);
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 768px) {
@@ -172,6 +173,7 @@ body {
     box-shadow: 0 0 40px rgba(168, 85, 247, 0.15), 0 25px 80px rgba(0, 0, 0, 0.5);
     margin-top: 2rem;
     margin-bottom: 2rem;
+    overflow: hidden;
   }
   body {
     display: flex;
@@ -179,6 +181,7 @@ body {
     justify-content: center;
     min-height: 100vh;
     background: #050508;
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
   }
 }
 

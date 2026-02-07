@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Screen1RealityCheck from "@/components/screens/Screen1RealityCheck";
 import Screen2Handover from "@/components/screens/Screen2Handover";
@@ -125,6 +125,33 @@ export default function Home() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [next, prev]);
+
+  // Touch swipe gestures
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    };
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
+      const dx = e.changedTouches[0].clientX - touchStartRef.current.x;
+      const dy = e.changedTouches[0].clientY - touchStartRef.current.y;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+      // Only trigger if horizontal swipe is dominant and > 60px
+      if (absDx > absDy && absDx > 60) {
+        if (dx < 0) next();
+        else prev();
+      }
+      touchStartRef.current = null;
+    };
+    document.addEventListener("touchstart", handleTouchStart, { passive: true });
+    document.addEventListener("touchend", handleTouchEnd, { passive: true });
+    return () => {
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
   }, [next, prev]);
 
   const screens = [

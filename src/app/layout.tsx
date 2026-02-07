@@ -18,6 +18,16 @@ export const metadata: Metadata = {
   title: "dAte nIght - AI Dating Concierge",
   description: "Less scrolling, more dressing up. Your AI Avatar does the dirty work of dating so you don't have to.",
   keywords: ["dating", "AI", "matchmaking", "date night"],
+  openGraph: {
+    title: "dAte nIght",
+    description: "10 Million potential matches. 52 weekends a year. Your AI Avatar does the dirty work of dating so you don't have to.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "dAte nIght - AI Dating Concierge",
+    description: "Less scrolling, more dressing up.",
+  },
 };
 
 export const viewport: Viewport = {
