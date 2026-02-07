@@ -100,8 +100,11 @@ export default function Screen7WarmIntro({ onNext }: { onNext: () => void }) {
                   <div className="w-7 h-7 rounded-full bg-neon-purple/20 flex items-center justify-center shrink-0 mt-1">
                     <span className="text-xs">🤖</span>
                   </div>
-                  <div className="chat-bubble-ai px-3.5 py-2.5 max-w-[85%]">
-                    <p className="text-sm text-text-secondary leading-relaxed">{msg.text}</p>
+                  <div>
+                    <div className="chat-bubble-ai px-3.5 py-2.5 max-w-[85%]">
+                      <p className="text-sm text-text-secondary leading-relaxed">{msg.text}</p>
+                    </div>
+                    <p className="text-[9px] text-text-muted/40 mt-0.5 ml-1">9:14 PM</p>
                   </div>
                 </div>
               )}

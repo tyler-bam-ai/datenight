@@ -76,10 +76,11 @@ export default function Screen4DeepDive({ onNext }: { onNext: () => void }) {
   const [answers, setAnswers] = useState<Record<number, string | string[]>>({});
   const [showReaction, setShowReaction] = useState(false);
   const [selectedGrid, setSelectedGrid] = useState<string[]>([]);
+  const [showLaunch, setShowLaunch] = useState(false);
 
   const q = questions[currentQ];
   const isLast = currentQ === questions.length - 1;
-  const progress = 30 + (currentQ / questions.length) * 25;
+  const progress = showLaunch ? 55 : 30 + (currentQ / questions.length) * 25;
 
   const handleAnswer = (answer: string) => {
     setAnswers({ ...answers, [q.id]: answer });
@@ -100,13 +101,13 @@ export default function Screen4DeepDive({ onNext }: { onNext: () => void }) {
       setTimeout(() => {
         setShowReaction(false);
         if (isLast) {
-          onNext();
+          setShowLaunch(true);
         } else {
           setCurrentQ((c) => c + 1);
         }
       }, 2500);
     } else if (isLast) {
-      onNext();
+      setShowLaunch(true);
     } else {
       setCurrentQ((c) => c + 1);
     }
@@ -121,129 +122,203 @@ export default function Screen4DeepDive({ onNext }: { onNext: () => void }) {
         <ProgressBar progress={progress} />
       </div>
 
-      {/* Phase header */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative z-10 mt-6 mb-2"
-      >
-        <p className="text-[10px] font-mono text-neon-purple/70 tracking-widest uppercase">
-          Phase 2: The Deep Dive
-        </p>
-      </motion.div>
-
-      {/* Avatar */}
-      <div className="relative z-10 flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-purple to-neon-purple-dim flex items-center justify-center shrink-0">
-          <span className="text-lg">🤖</span>
-        </div>
-        <div className="chat-bubble-ai px-4 py-2.5">
-          <p className="text-[10px] text-neon-purple/60 mb-0.5 font-medium">{q.category}</p>
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={q.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="text-sm text-text-secondary leading-relaxed"
-            >
-              &ldquo;{q.prompt}&rdquo;
-            </motion.p>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Question content */}
       <AnimatePresence mode="wait">
-        {showReaction ? (
+        {showLaunch ? (
           <motion.div
-            key="reaction"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative z-10 flex-1 flex items-center justify-center"
+            key="launch"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="relative z-10 flex-1 flex flex-col items-center justify-center text-center"
           >
-            <div className="chat-bubble-ai p-5 max-w-xs">
-              <p className="text-sm text-neon-purple italic text-center">
-                &ldquo;{aiReactions[Math.floor(currentQ / 3) % aiReactions.length]}&rdquo;
-              </p>
+            {/* Ambient pulse */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <motion.div
+                className="w-64 h-64 rounded-full bg-neon-purple/10"
+                animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.1, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              />
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-4 mb-8"
+            >
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-neon-purple to-neon-purple-dim flex items-center justify-center mx-auto">
+                <span className="text-2xl">🤖</span>
+              </div>
+              <div className="chat-bubble-ai p-4 max-w-xs mx-auto">
+                <p className="text-sm text-text-secondary leading-relaxed italic">
+                  &ldquo;Okay, you look great. Now I know what makes you tick. I&rsquo;m all set and ready to get out there for you. Wish me luck!&rdquo;
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, type: "spring" }}
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onNext}
+                className="relative w-40 h-40 rounded-full cursor-pointer"
+                style={{
+                  background: "linear-gradient(135deg, #a855f7, #f97316)",
+                  boxShadow: "0 0 40px rgba(168, 85, 247, 0.4), 0 0 80px rgba(249, 115, 22, 0.2)",
+                }}
+              >
+                <motion.div
+                  className="absolute inset-0 rounded-full"
+                  animate={{ boxShadow: ["0 0 20px rgba(168,85,247,0.3)", "0 0 50px rgba(168,85,247,0.6)", "0 0 20px rgba(168,85,247,0.3)"] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <div className="absolute inset-1 rounded-full bg-obsidian flex flex-col items-center justify-center gap-1">
+                  <span className="text-xl font-black gradient-cyber-text uppercase tracking-wider">Go</span>
+                  <span className="text-xl font-black gradient-cyber-text uppercase tracking-wider">Girl</span>
+                </div>
+              </motion.button>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="text-[10px] text-text-muted/50 mt-6"
+            >
+              Tap to launch your AI Avatar into the digital wild
+            </motion.p>
           </motion.div>
         ) : (
-          <motion.div
-            key={`q-${q.id}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="relative z-10 flex-1"
-          >
-            {q.type === "choice" && (
-              <div className="space-y-3">
-                {q.options?.map((option, i) => (
-                  <motion.button
-                    key={option}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    onClick={() => handleAnswer(option)}
-                    className="w-full text-left p-4 rounded-xl bg-surface/70 border border-white/5 hover:border-neon-purple/40 hover:bg-neon-purple/5 transition-all"
-                  >
-                    <p className="text-sm text-text-primary">{option}</p>
-                  </motion.button>
-                ))}
-              </div>
-            )}
+          <>
+            {/* Phase header */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="relative z-10 mt-6 mb-2"
+            >
+              <p className="text-[10px] font-mono text-neon-purple/70 tracking-widest uppercase">
+                Phase 2: The Deep Dive
+              </p>
+            </motion.div>
 
-            {q.type === "grid" && (
-              <div>
-                <p className="text-xs text-text-muted mb-3">Select up to 3</p>
-                <div className="grid grid-cols-3 gap-3">
-                  {q.gridOptions?.map((opt, i) => (
-                    <motion.button
-                      key={opt.label}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.05 }}
-                      onClick={() => handleGridSelect(opt.label)}
-                      className={`vibe-card p-4 flex flex-col items-center gap-2 ${
-                        selectedGrid.includes(opt.label) ? "selected" : ""
-                      }`}
-                    >
-                      <span className="text-2xl">{opt.emoji}</span>
-                      <span className="text-[10px] text-text-muted">{opt.label}</span>
-                    </motion.button>
-                  ))}
-                </div>
-                {selectedGrid.length === 3 && (
-                  <motion.div
+            {/* Avatar */}
+            <div className="relative z-10 flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-purple to-neon-purple-dim flex items-center justify-center shrink-0">
+                <span className="text-lg">🤖</span>
+              </div>
+              <div className="chat-bubble-ai px-4 py-2.5">
+                <p className="text-[10px] text-neon-purple/60 mb-0.5 font-medium">{q.category}</p>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={q.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-4"
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-sm text-text-secondary leading-relaxed"
                   >
-                    <NeonButton onClick={() => { setAnswers({ ...answers, [q.id]: selectedGrid }); advanceQuestion(); }} size="md">
-                      That&rsquo;s the truth
-                    </NeonButton>
-                  </motion.div>
-                )}
+                    &ldquo;{q.prompt}&rdquo;
+                  </motion.p>
+                </AnimatePresence>
               </div>
-            )}
-          </motion.div>
+            </div>
+
+            {/* Question content */}
+            <AnimatePresence mode="wait">
+              {showReaction ? (
+                <motion.div
+                  key="reaction"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="relative z-10 flex-1 flex items-center justify-center"
+                >
+                  <div className="chat-bubble-ai p-5 max-w-xs">
+                    <p className="text-sm text-neon-purple italic text-center">
+                      &ldquo;{aiReactions[Math.floor(currentQ / 3) % aiReactions.length]}&rdquo;
+                    </p>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={`q-${q.id}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="relative z-10 flex-1"
+                >
+                  {q.type === "choice" && (
+                    <div className="space-y-3">
+                      {q.options?.map((option, i) => (
+                        <motion.button
+                          key={option}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                          onClick={() => handleAnswer(option)}
+                          className="w-full text-left p-4 rounded-xl bg-surface/70 border border-white/5 hover:border-neon-purple/40 hover:bg-neon-purple/5 transition-all"
+                        >
+                          <p className="text-sm text-text-primary">{option}</p>
+                        </motion.button>
+                      ))}
+                    </div>
+                  )}
+
+                  {q.type === "grid" && (
+                    <div>
+                      <p className="text-xs text-text-muted mb-3">Select up to 3</p>
+                      <div className="grid grid-cols-3 gap-3">
+                        {q.gridOptions?.map((opt, i) => (
+                          <motion.button
+                            key={opt.label}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: i * 0.05 }}
+                            onClick={() => handleGridSelect(opt.label)}
+                            className={`vibe-card p-4 flex flex-col items-center gap-2 ${
+                              selectedGrid.includes(opt.label) ? "selected" : ""
+                            }`}
+                          >
+                            <span className="text-2xl">{opt.emoji}</span>
+                            <span className="text-[10px] text-text-muted">{opt.label}</span>
+                          </motion.button>
+                        ))}
+                      </div>
+                      {selectedGrid.length === 3 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mt-4"
+                        >
+                          <NeonButton onClick={() => { setAnswers({ ...answers, [q.id]: selectedGrid }); advanceQuestion(); }} size="md">
+                            That&rsquo;s the truth
+                          </NeonButton>
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Question counter */}
+            <div className="relative z-10 pb-4 pt-4">
+              <div className="flex justify-center gap-1.5">
+                {questions.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-1 rounded-full transition-all duration-300 ${
+                      i < currentQ ? "w-4 bg-neon-purple" : i === currentQ ? "w-6 bg-neon-orange" : "w-2 bg-white/10"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
         )}
       </AnimatePresence>
-
-      {/* Question counter */}
-      <div className="relative z-10 pb-4 pt-4">
-        <div className="flex justify-center gap-1.5">
-          {questions.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 rounded-full transition-all duration-300 ${
-                i < currentQ ? "w-4 bg-neon-purple" : i === currentQ ? "w-6 bg-neon-orange" : "w-2 bg-white/10"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

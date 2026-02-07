@@ -106,11 +106,30 @@ export default function Screen6MatchDashboard({ onNext }: { onNext: () => void }
         </p>
       </motion.div>
 
+      {/* The Vault Paywall */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.3 }}
+        className="relative z-10 p-3 rounded-xl bg-gradient-to-r from-neon-orange/5 to-yellow-500/5 border border-neon-orange/15 mb-4"
+      >
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-sm">🏆</span>
+          <p className="text-[10px] text-neon-orange font-bold uppercase tracking-wider">The Vault</p>
+        </div>
+        <p className="text-[10px] text-text-muted leading-relaxed mb-2">
+          I found 300 more matches in <span className="text-neon-orange">The Vault</span>&mdash;fully vetted for safety &amp; status (ID, Background, Credit checked). Want me to open the door?
+        </p>
+        <button className="text-[10px] text-neon-orange/80 font-semibold hover:text-neon-orange transition-colors">
+          Get Vault Access &mdash; $29.99/mo &rarr;
+        </button>
+      </motion.div>
+
       {/* Actions */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.4 }}
+        transition={{ delay: 1.5 }}
         className="relative z-10 space-y-2 pb-4"
       >
         <NeonButton onClick={onNext} variant="purple">

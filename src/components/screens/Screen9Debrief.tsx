@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import NeonButton from "../ui/NeonButton";
 import ProgressBar from "../ui/ProgressBar";
+import Confetti from "../ui/Confetti";
 
 const punctualityOptions = ["Early", "On-Time", "Fashionably Late", "No-Show"];
 const conversationOptions = ["Great Listener", "Shared the Mic", "Talked Over Me"];
@@ -201,6 +202,7 @@ export default function Screen9Debrief({ onNext }: { onNext: () => void }) {
             animate={{ opacity: 1, scale: 1 }}
             className="relative z-10 flex-1 flex flex-col items-center justify-center text-center"
           >
+            <Confetti count={40} />
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}

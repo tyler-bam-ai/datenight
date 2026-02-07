@@ -231,3 +231,59 @@ body {
   font-size: 14px;
   animation: data-stream 4s linear infinite;
 }
+
+/* Custom range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a855f7, #f97316);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  border: 2px solid #0a0a0f;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a855f7, #f97316);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  border: 2px solid #0a0a0f;
+}
+
+/* Splash screen */
+@keyframes logo-reveal {
+  0% { opacity: 0; transform: scale(0.8); filter: blur(10px); }
+  50% { opacity: 1; transform: scale(1.05); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+@keyframes splash-fade {
+  0% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+
+/* Screen label pills */
+.screen-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(168, 85, 247, 0.7);
+}

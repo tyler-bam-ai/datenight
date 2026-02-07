@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProgressBar from "../ui/ProgressBar";
 
@@ -27,6 +27,7 @@ const tickerData: TickerEntry[] = [
 export default function Screen5SearchMode({ onNext }: { onNext: () => void }) {
   const [visibleEntries, setVisibleEntries] = useState<number>(0);
   const [matchFound, setMatchFound] = useState(false);
+  const tickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,6 +42,13 @@ export default function Screen5SearchMode({ onNext }: { onNext: () => void }) {
     }, 1800);
     return () => clearInterval(interval);
   }, []);
+
+  // Auto-scroll ticker to bottom
+  useEffect(() => {
+    if (tickerRef.current) {
+      tickerRef.current.scrollTo({ top: tickerRef.current.scrollHeight, behavior: "smooth" });
+    }
+  }, [visibleEntries]);
 
   const statusColor = (status?: string) => {
     switch (status) {
@@ -109,7 +117,7 @@ export default function Screen5SearchMode({ onNext }: { onNext: () => void }) {
           <span className="text-[10px] font-mono text-text-muted uppercase tracking-widest">Live Activity Feed</span>
         </div>
 
-        <div className="p-3 space-y-2 overflow-y-auto max-h-[360px]">
+        <div ref={tickerRef} className="p-3 space-y-2 overflow-y-auto max-h-[360px]">
           <AnimatePresence>
             {tickerData.slice(0, visibleEntries).map((entry, i) => (
               <motion.div
@@ -145,8 +153,27 @@ export default function Screen5SearchMode({ onNext }: { onNext: () => void }) {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative z-10 mt-4 pb-4"
+            className="relative z-10 mt-4 pb-4 space-y-3"
           >
+            {/* Match notification card */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", bounce: 0.4 }}
+              className="p-4 rounded-2xl bg-gradient-to-r from-neon-purple/10 to-neon-orange/10 border border-neon-purple/20 text-center"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring" }}
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-neon-purple to-neon-orange mx-auto mb-2 flex items-center justify-center"
+                style={{ boxShadow: "0 0 20px rgba(168, 85, 247, 0.4)" }}
+              >
+                <span className="text-xl">💜</span>
+              </motion.div>
+              <p className="text-sm font-semibold text-text-primary mb-0.5">Found someone worth your time</p>
+              <p className="text-[10px] text-text-muted">94% compatible &middot; 0 deal-breakers detected</p>
+            </motion.div>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
@@ -154,7 +181,7 @@ export default function Screen5SearchMode({ onNext }: { onNext: () => void }) {
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-neon-purple to-neon-orange text-white font-bold text-sm tracking-wide uppercase animate-heartbeat cursor-pointer"
               style={{ boxShadow: "0 0 30px rgba(168, 85, 247, 0.4), 0 0 60px rgba(249, 115, 22, 0.2)" }}
             >
-              🎉 See Your Match
+              See Your Match
             </motion.button>
           </motion.div>
         ) : (
